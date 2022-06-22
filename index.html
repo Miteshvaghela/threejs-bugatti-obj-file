@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3d Bugatti with Threejs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./assets/three.min.js"></script>
+    <script src="./assets/OBJLoader.js"></script> 
+    <script src="./assets/OrbitControls.js"></script> 
+</head>
+<body>
+    <div class="lg:content-auto">
+        <h1 class="underline text-5xl font-bold text-center">
+            3d Bugatti with threejs (.OBJ)
+        </h1>
+        <div id="model"></div>
+    </div>
+
+    <script type="text/javascript">
+        let scene, camera, renderer; 
+
+        function initModel(){
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+            camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 1, 5000);
+
+            camera.rotation.y = 45/180*Math.PI;
+            camera.position.x = 500;
+            camera.position.y = 300;
+            camera.position.z = 3000; 
+            
+            hLight = new THREE.AmbientLight(0xd7d7d7, 100);
+            scene.add(hLight);
+
+            directionalLight = new THREE.DirectionalLight(0xc4c4c4, 0.9);
+            directionalLight.position.set(0,1,0);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            renderer = new THREE.WebGLRenderer({antialias:true});
+            renderer.setSize(window.innerWidth, window.innerHeight)
+            document.body.appendChild(renderer.domElement)
+
+            const controls = new THREE.OrbitControls(camera, renderer.domElement)
+            controls.enableDamping = true
+            const l1 = new THREE.PointLight( 0xff0000, 1, 100 );
+            l1.position.set( -150, 30, 10 );
+            scene.add( l1 );
+
+            const l2 = new THREE.PointLight( 0xff0000, 1, 100 );
+            l2.position.set( -230, 50, 110 );
+            scene.add( l2 );
+
+            const l3 = new THREE.PointLight( 0xff0000, 1, 100 );
+            l3.position.set( 0, 140, 150 );
+            scene.add( l3 );
+
+            const l4 = new THREE.PointLight( 0xff0000, 1, 100 );
+            l4.position.set( -90, 10, 210 );
+            scene.add( l4 );
+
+            
+
+            const spotLight = new THREE.SpotLight( 0xffffff );
+            spotLight.position.set( 100, 2000, 80 );
+
+            spotLight.castShadow = true;
+
+            spotLight.shadow.mapSize.width = 1004;
+            spotLight.shadow.mapSize.height = 2024;
+
+            spotLight.shadow.camera.near = 500;
+            spotLight.shadow.camera.far = 4000;
+            spotLight.shadow.camera.fov = 30;
+
+            scene.add( spotLight );
+
+            const ob1 = new THREE.OBJLoader();
+            ob1.load(
+                './assets/model/object/bugatti.obj',
+                function(o){
+                     console.dir(o);
+                    // car = o.scene.children[0];
+                    // car.scale.set(100,100,100);
+                    
+                    o.scale.set(200,200,200);
+                    scene.add(o);
+                    animate();
+                }
+            );
+
+           
+        }
+
+        function animate(){
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+
+        }
+
+        initModel();
+
+
+    </script>
+</body>
+</html>
